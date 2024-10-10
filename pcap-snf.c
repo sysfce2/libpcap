@@ -349,8 +349,8 @@ snf_findalldevs(pcap_if_list_t *devlistp, char *errbuf)
 	const char *nr = NULL;
 
 	if (snf_init(SNF_VERSION_API)) {
-		(void)snprintf(errbuf, PCAP_ERRBUF_SIZE,
-		    "snf_getifaddrs: snf_init failed");
+		pcapint_fmt_errmsg_for_errno(errbuf, PCAP_ERRBUF_SIZE,
+		    errno, "snf_init");
 		return (-1);
 	}
 
@@ -365,7 +365,7 @@ snf_findalldevs(pcap_if_list_t *devlistp, char *errbuf)
 		merge = strtol(nr, NULL, 0);
 		if (errno) {
 			(void)snprintf(errbuf, PCAP_ERRBUF_SIZE,
-				"snf_getifaddrs: SNF_FLAGS is not a valid number");
+				"snf_findalldevs: SNF_FLAGS is not a valid number");
 			return (-1);
 		}
 		merge = merge & SNF_F_AGGREGATE_PORTMASK;
@@ -588,7 +588,7 @@ snf_create(const char *device, char *ebuf, int *is_ours)
  * There are no regular interfaces, just SNF interfaces.
  */
 int
-pcapint_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf)
+pcapint_platform_finddevs(pcap_if_list_t *devlistp _U_, char *errbuf _U_)
 {
 	return (0);
 }
@@ -597,7 +597,7 @@ pcapint_platform_finddevs(pcap_if_list_t *devlistp, char *errbuf)
  * Attempts to open a regular interface fail.
  */
 pcap_t *
-pcapint_create_interface(const char *device, char *errbuf)
+pcapint_create_interface(const char *device _U_, char *errbuf)
 {
 	snprintf(errbuf, PCAP_ERRBUF_SIZE,
 	    "This version of libpcap only supports SNF cards");
